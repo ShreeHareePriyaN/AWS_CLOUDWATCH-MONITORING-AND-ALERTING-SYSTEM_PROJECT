@@ -1,0 +1,162 @@
+							PROJECT — CLOUD MONITORING & ALERTING SYSTEM (AWS)
+
+
+Goal : Monitor an EC2 instance (CPU, memory), send alerts via SNS, maintain CloudWatch dashboards, and test alarms.
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+AWS Services Used: 
+
+	EC2
+
+	CloudWatch (Metrics, Alarms, Dashboards, Logs)
+
+	SNS (Email Alerts)
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Region & Subnet
+
+	Region: Asia Pacific (Mumbai) — ap-south-1
+
+	Availability Zone: ap-south-1a (Default Subnet)
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 1: Launch EC2 Instance
+
+	AWS Console → EC2 → Launch Instance
+
+	Name: Monitoring-Demo-EC2
+
+	AMI: Amazon Linux 2023 (Free Tier)
+
+	Instance Type: t2.micro (Free Tier)
+
+	Key Pair: Create new or use existing
+
+	VPC: Default VPC
+
+	Subnet: ap-south-1a
+
+	Security Group: Allow SSH (22) → My IP
+
+	Storage: 8GB (default)
+
+	Click Launch Instance
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 2: Create SNS Topic for Alerts
+
+	Create SNS Topic
+
+	Type: Standard
+
+	Name: CloudWatch-Alerts-Topic
+
+	Region: ap-south-1
+
+	Subscribe Email
+
+	Protocol: Email
+	
+	Endpoint: Your Gmail
+
+	Confirm subscription via email
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 3: Create CloudWatch Alarm
+
+	CPU Utilization Alarm
+
+	Metric: EC2 → Per-Instance Metrics → Monitoring-Demo-EC2
+
+	Condition: CPUUtilization > 70% (1 datapoint, 1 minute)
+
+	Alarm Action: Send notification → CloudWatch-Alerts-Topic
+
+	Name: High-CPU-Alarm
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 4: Create CloudWatch Log Group
+
+	CloudWatch → Logs → Log Groups → Create log group
+
+	Name: /ec2/monitoring-demo
+
+	Region: ap-south-1
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 6: Install CloudWatch Agent on EC2
+
+	(After connecting using EC2 Instance Connect)
+
+	Install Agent
+		sudo yum install -y amazon-cloudwatch-agent
+		sudo systemctl start amazon-cloudwatch-agent
+		sudo systemctl enable amazon-cloudwatch-agent
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 8: Create CloudWatch Dashboard
+
+	Dashboard Setup
+
+	Name: Cloud-Monitoring-Dashboard
+
+	Add widgets:
+
+	CPUUtilization (Line graph)
+
+	NetworkIn (Line graph)
+
+	StatusCheckFailed (Bar graph)
+
+	Alarm State (Number widget)
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 9: Service Quotas Monitoring
+
+Service Quotas → EC2
+
+Enable CloudWatch metrics for service limits
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Step 10: Test the Alarm
+
+	Stress CPU
+		sudo amazon-linux-extras install -y epel
+		sudo yum install -y stress
+		stress --cpu 2 --timeout 60
+
+	Verify Alarm
+
+	Alarm state changes to ALARM
+
+	SNS email received
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+Technical Highlights: 
+
+	Monitoring AWS resources using CloudWatch
+
+	CPU health and performance metrics
+
+	Service Quotas monitoring
+
+	EC2 provisioning
+
+	SNS email alerts
+
+	CloudWatch dashboards & logs
+
+	Alarm testing and first-level troubleshooting
+
+--------------------------------------------------------------------------------------------------------------------------------
